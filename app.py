@@ -1,6 +1,6 @@
 import requests
 import json 
-from django.http import HttpResponse
+#from django.http import HttpResponse
 
 key = '1SXC5NCVKRJPOEG6'
 ticker = 'AAPL'
