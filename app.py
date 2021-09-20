@@ -39,7 +39,7 @@ def extract_dividend_per_share(overview) -> float:
 
 
 def main():
-    st.title('Expected share price based on the Discounted Dividend Model (DDM)')
+    st.title('Expected stock price based on the Discounted Dividend Model (DDM)')
 
     ticker = st.text_input('Please input ticker of stock you wish to analyze')
     g = st.number_input('Expected annual growth')
@@ -58,7 +58,7 @@ def main():
 
             st.header(f'Analysis for {name}')
             
-            st.subheader('Expected Share Price (based on DDM)')
+            st.subheader('Expected Stock Price (based on DDM)')
             st.write(str(round(ddm(dividend, r, g), 2)))
 
 
