@@ -53,6 +53,7 @@ def main():
             
             fig = plt.figure()
             plt.plot(df3['index'],df3['4. close'])
+            plt.xticks(rotation=30)
 #             df3.plot(x='index', y='4. close')
 
             st.pyplot(fig)
