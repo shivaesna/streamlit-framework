@@ -4,6 +4,7 @@ import streamlit as st
 import requests
 import json 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def retrieve_data(function: str, symbol: str, api_key: str) -> dict:
     """
@@ -17,53 +18,55 @@ def retrieve_data(function: str, symbol: str, api_key: str) -> dict:
     data = response.text
     # parse output
     parsed = json.loads(data)
-    
     return parsed
 
 
-def extract_name(overview) -> str:
-    return overview['Name']
-
-
-def extract_dividend_per_share(overview) -> float:
-    try:
-        dps = float(overview['DividendPerShare'])
-    except:
-        # handle "none"
-        dps = 0.0
-    return dps
-
-
-
-
-
-
 def main():
-    st.title('Expected stock price based on the Discounted Dividend Model (DDM)')
+    st.title('Welcome to Stock Price Plotter')
 
     ticker = st.text_input('Please input ticker of stock you wish to analyze')
-    g = st.number_input('Expected annual growth')
-    r = st.number_input('Discount rate')
+    month_input = st.slider('Month', min_value=1, max_value=12, value=9, step=1)
+#     month_input = st.number_input('Month', min_value=1, max_value=12, value=12, step=1)
+    
+    year_input = st.slider('Year', min_value=2017, max_value=2021, value=2021, step=1)
+#     year_input = st.number_input('Year', min_value=2017, max_value=2021, value=12, step=1)
 
-    calculate_button = st.button('Calculate DDM')
+    calculate_button = st.button('Plot Graph')
 
     if calculate_button:
         if ticker == '':
             st.error('Please provide a ticker.')
         else:
-            overview = retrieve_data('OVERVIEW', ticker, API_KEYS)
-
-            name = extract_name(overview)
-            dividend = extract_dividend_per_share(overview)
-
-            st.header(f'Analysis for {name}')
+            parsed_data = retrieve_data('TIME_SERIES_DAILY_ADJUSTED', ticker, API_KEYS)
+            df1= pd.DataFrame(parsed_data['Time Series (Daily)'])
+            df2= df1.T
+            df2= df2.reset_index()
+            df2['index'] = pd.to_datetime(df2['index'])
+#             month_input=9
+#             year_input=2021
+            df3=df2.loc[(pd.DatetimeIndex(df2['index']).year == year_input) & (pd.DatetimeIndex(df2['index']).month == month_input)]
             
-            st.subheader('Expected Stock Price (based on DDM)')
-            st.write(str(round(ddm(dividend, r, g), 2)))
+            df3['4. close']=df3['4. close'].astype(float,errors='raise')
+            
+            st.header(f'Analysis for {ticker}')
+            st.subheader('Closing price')
+            
+            fig = plt.figure()
+            plt.plot(df3['index'],df3['4. close'])
+#             df3.plot(x='index', y='4. close')
+
+            st.pyplot(fig)
 
 
-def ddm(dividend: float, r: float, g: float) -> float:
-    return (dividend * (1 + g))/(r - g)
+#             name = extract_name(overview)
+#             dividend = extract_dividend_per_share(overview)
+
+
+#             st.write(str(round(ddm(dividend, r, g), 2)))
+
+
+# def ddm(dividend: float, r: float, g: float) -> float:
+#     return (dividend * (1 + g))/(r - g)
 
 
 if __name__ == '__main__':
