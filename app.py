@@ -6,13 +6,13 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def retrieve_data(function: str, symbol: str, api_key: str) -> dict:
+def retrieve_data(function: str, symbol: str, output_size:str, api_key: str) -> dict:
     """
     Retrieves data from AlphaVantage's open API.
     Documentation located at: https://www.alphavantage.co/documentation
     """
     # query from API
-    url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&apikey={api_key}'
+    url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&outputsize={output_size}&apikey={api_key}'
     response = requests.get(url)
     # read output
     data = response.text
@@ -28,7 +28,7 @@ def main():
     month_input = st.slider('Month', min_value=1, max_value=12, value=9, step=1)
 #     month_input = st.number_input('Month', min_value=1, max_value=12, value=12, step=1)
     
-    year_input = st.slider('Year', min_value=2017, max_value=2021, value=2021, step=1)
+    year_input = st.slider('Year', min_value=2000, max_value=2021, value=2021, step=1)
 #     year_input = st.number_input('Year', min_value=2017, max_value=2021, value=12, step=1)
 
     calculate_button = st.button('Plot Graph')
@@ -37,7 +37,7 @@ def main():
         if ticker == '':
             st.error('Please provide a ticker.')
         else:
-            parsed_data = retrieve_data('TIME_SERIES_DAILY_ADJUSTED', ticker, API_KEYS)
+            parsed_data = retrieve_data('TIME_SERIES_DAILY', ticker, 'full', API_KEYS)
             df1= pd.DataFrame(parsed_data['Time Series (Daily)'])
             df2= df1.T
             df2= df2.reset_index()
