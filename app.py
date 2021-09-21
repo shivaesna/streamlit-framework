@@ -37,7 +37,7 @@ def main():
         if ticker == '':
             st.error('Please provide a ticker.')
         else:
-            parsed_data = retrieve_data('TIME_SERIES_DAILY', ticker, 'full', API_KEYS)
+            parsed_data = retrieve_data('TIME_SERIES_DAILY_ADJUSTED', ticker, 'full', API_KEYS)
             df1= pd.DataFrame(parsed_data['Time Series (Daily)'])
             df2= df1.T
             df2= df2.reset_index()
